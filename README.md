@@ -43,13 +43,19 @@ Our output will be this:
 "Rene"
 ```
 
-Basically assigning name to second name isnt a pointer, it acutally makes a copy of the value and stores it in the variable.
+Basically assigning name to secondName isnt a pointer, it actually makes a copy of the value and stores it in the variable.
 
-Primitive data is stores on something called "the stack". The stack is a stack of data in your memory which is in a place which can be accessed quickly and is actually quite limited in its storage capacity. In "the stack" when new variables are added they just get added to the top. The variable names we assign know which position in the stack they are refering to. Since the stack is limited in space that is what makes it perfect for primitive values, because they usually dont take up too much space.
+Primitive data is stores on something called "the stack". The stack is a stack of data in your memory, which is in a place that can be accessed quickly and is actually quite limited in its storage capacity. In "the stack" when new variables are added they just get added to the top. The variable names we assign know which position in the stack they are refering to. Since the stack is limited in space that is what makes it perfect for primitive values, because they usually dont take up too much space.
+
+If you do want to copy an objects vaues you can do either of the following: Use the Object.assign() function in JS or use the spread operator {...objectToCopy}. Object assign does not create deep copys though. It wont cory arrays inside of arrays, it will just copy the pointers to the arrays.
 
 **_Reference types:_**
-_ Objects
-_ Arrays \* Functions
+
+\_ Objects
+
+\_ Arrays
+
+\_ Functions
 
 In order to understand this better lets write some code:
 
@@ -104,9 +110,12 @@ So when we make a new variable which is meant to copy the object by writing this
 const employee2 = employee1;
 ```
 
-What we're actually doing is only copying the pointer in the stack and ot the object in the heap. Hence changes to one means changes to the other.
+What we're actually doing is only copying the pointer in the stack and to the object in the heap. Hence changes to one means changes to the other.
+
+## Now for React
 
 **How does React work?**
+
 Lets not forget that React is a JS library for building user interfaces. It is all about components, we use these components to build the user interfaces. ReactDOM is our interface to the web. React itself doesn't know anything about the web/browser. For example knows how to work with components but it doesnt care if those components contain html elements or even fictional elements. Its ReactDOM which cares about that and brings the components to the screen. React is just the library which manages components, states and component states and finds out how components need to change as compared to their previous state. React hands all that information off to the interface its working with, that being ReactDOM. ReactDOM is responsible for working with the real DOM (AKA the browser) so the user can then see it.
 
 So React deals with the state, props and the context (component-wide data) of a component and if it sees a change that needs to be drawn to the screen, it lets ReactDOM know so that ReactDOM can do its thing.
