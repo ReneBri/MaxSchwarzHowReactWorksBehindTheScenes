@@ -1,8 +1,10 @@
 # Section 12: A Look Behind the Scenes of React
 
+## My Notes
+
 ### First, Let's Look at Some JavaScript Theory Which Is Benefitial Here
 
-**Reference vs. Primitive**
+## Reference vs. Primitive
 
 **_Primitive types:_**
 
@@ -112,6 +114,82 @@ const employee2 = employee1;
 
 What we're actually doing is only copying the pointer in the stack and to the object in the heap. Hence changes to one means changes to the other.
 
+**_ Misc Details About Comparisons _**
+
+In js you can compare two primitive values. For example:
+
+```
+'hi' === 'hi'
+```
+
+And you will get true returned. But you cannot compare two reference values. For example:
+
+```
+{ name: 'Rene' } === { name: 'Rene' }
+```
+
+For that we would get false returned.
+
+## Closures
+
+JavaScript closures are functions that can access values outside of their own curly braces.
+
+In order for the interpreter to call a function it needs to know about the function itself and any other data from the surrounding environment (AKA lexical environment) that it depends on. Everything needs to be tidied up into a box before it can be sent to the v8 engine.
+
+Below is an example of a fully self-contained function (AKA not a closure);
+
+```
+function pureFunc(a, b) {
+    return a + b;
+}
+```
+
+When it's called, it gets pushed onto the callstack where it's executed and its internal data is only stored in the stack until its popped back off the call stack.
+
+Closure example:
+
+```
+let b = 3;
+
+function pureFunc(a, b) {
+    return a + b;
+}
+```
+
+But if a function accesses data from outside of its scope, like from an outer function or the global environment. That leaves us with an open expression that accesses other free variables throughout the environment. Now in order for the interpreter to call this function and to also know the value of these free variables, it creates a closure in order to store them in a place in memory where they can be accessed later. It stores them in the Heap Memory, since i'm assuming it stores them as an object and this is why functions are actually objects in js. Unlike the call stack, the heap is long term memory which decides later on when to be deleted using its own garbarge collection. So a closure is not only a function but its a function combined iwth its outer state or "lexical environment".
+
+Closures are good for containing data and making sure not to pollute the global environment:
+
+```
+function outer (enteredName) {
+    let name = enteredName;
+    return function inner () {
+        console.log(`Hey ${name}`);
+    }
+}
+```
+
+Now we could make a function factory like this
+
+```
+const hiMom = outer("Janet");
+const hiDad = outer("Tony");
+```
+
+Also a cool example of things you can do here:
+
+```
+const makeSentence = (firstHalf) => {
+	return (secondHalf) => {
+  	return firstHalf + secondHalf;
+  }
+}
+
+const addSentence = makeSentence("This is the first half... ");
+
+console.log(addSentence("And this is the second half."));
+```
+
 ## Now for React
 
 **How does React work?**
@@ -164,4 +242,14 @@ The optomization method React.memo comes at a cost. This tells React that whenev
 
 **Functions Being Primitive**
 
-Functions which are declared inside of a React component are re-declared each time a component is re-evaluated. This can lead to issues, especially when they are mentioned inside of a useEffect dependency array. This is because after each re-evaluation the function will be re-decalred and hence it is a new function, triggering the dependency array again in an infinite loop. Also, if you use the React.memo() to export a component and one of its props is a function it will always re-evaluate dispite having the React.memo() because it sees that the function is new. This means you have actually just made your app less optimized because the memo means there is the added storage and comparison of props as well as always re-evaluating anyways.
+Functions which are declared inside of a React component are re-declared each time a component is re-evaluated. This can lead to issues, especially when they are mentioned inside of a useEffect dependency array. This is because after each re-evaluation the function will be re-decalred and hence it is a new function, triggering the dependency array again in an infinite loop. Also, if you use the React.memo() to export a component and one of its props is a function it will always re-evaluate dispite having the React.memo() because it sees that the function is new. This means you have actually just made your app less optimized because the memo means there is the added storage and comparison of props as well as always re-evaluating anyways. But there is a solution. And that is...
+
+**useCallback**
+
+So, since functions in js are actually objects and therefore reference types, we need a way to store them so that they do not re-declare on every re-evaluation. Thankfully, React gives us a hook to deal with this: the useCallback hook. useCallback basically tells React to only re-create the pointer in the stack and not the object in the heap, so that when it compares the "two objects" it is actually just comparing both pointers which are pointing to the same object together. Basically it stores the object in Reacts internal storage and always just uses that in the re-renders rather than re-declaring the function again.
+
+**useCallback Dependencies**
+
+Dependencies in the dependency array should be the same as they are for useEffect. As in any outside values like state that the function depends on should be added in the array.
+
+When we use useCallback React basically locks in all the values of the variables which we use in our function> rather than saving the variable itself, its saves the value of the variable at the time of the function creation. This can be an issue if we, for example, had a piece of state which something was conditionally defined by. So in order to have a new snapshot of the function when these important pieces of state change we add them to the dependency array.
