@@ -5,12 +5,19 @@
 **Reference vs. Primitive**
 
 **_Primitive types:_**
-_ String
-_ Number
-_ Boolean
-_ Undefined
-_ Null
-_ & ES6 Symbols
+
+\_ String
+
+\_ Number
+
+\_ Boolean
+
+\_ Undefined
+
+\_ Null
+
+\_ & ES6 Symbols
+
 \_ Pointers(But under the hood)
 
 Primitive values are copied by value. This means that if we do this:
