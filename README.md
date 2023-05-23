@@ -252,4 +252,52 @@ So, since functions in js are actually objects and therefore reference types, we
 
 Dependencies in the dependency array should be the same as they are for useEffect. As in any outside values like state that the function depends on should be added in the array.
 
-When we use useCallback React basically locks in all the values of the variables which we use in our function> rather than saving the variable itself, its saves the value of the variable at the time of the function creation. This can be an issue if we, for example, had a piece of state which something was conditionally defined by. So in order to have a new snapshot of the function when these important pieces of state change we add them to the dependency array.
+When we use useCallback React basically locks in all the values of the variables which we use in our function rather than saving the variable itself, its saves the value of the variable at the time of the function creation. This can be an issue if we, for example, had a piece of state which something was conditionally defined by. So in order to have a new snapshot of the function when these important pieces of state change we add them to the dependency array.
+
+## State and State Scheduling / Batching
+
+**Components & State**
+
+One of the most common forms of managing state is the useState hook. Declaring useState automatically attaches that peice of state to that component. this sort of attachment is done behind the scenes by React.
+
+useState only runs on the mounting of the component. react remembers if it has declared it before and does not re-declare it on each re-execution.
+
+**Understanding State Scheduling and Batching**
+
+Calling a setState function does not mean that that peice of state is re-defined at the end of that call. It instead tells React that this state update needs to be scheduled. So perhaps it should really be called scheduleSetState()... But we won't actually do that. It schedules it with something called the data "Book". If React sees another task as more important than your state change, it will complete those tasks first.
+
+What React does guarentee though is that the order of state changes for one and the same type of state, remains the same. So if we do:
+
+```
+setProduct("Book");
+setProduct("Carpet");
+```
+
+The final state change there will always be to Carpet, even if it isn't executed immediatly.
+
+Once it sees that there was a state change for product, then it will re-xecute and re-evaluate the function.
+
+Since multiple state updates can be batched to be executed before a re-evaluation it is important we use the "prevState" in the function form such as this:
+
+```
+setToggle((prevState)=> !prevState);
+```
+
+If you are updating state based on a greater lexical environment (other state that is outside of itself (the prevState)), then using useEffect with dependency arrays is key. It ensures that on each state update the functino is re-run with the new values in mind.
+
+If you have two update state functions in the same syncronus code block, then they are batched and executed concurrently and only after is a re-evaluation/re-render performed. So, does that mean that after each block is executed, then state is updated, then the component re-executed and it continues on until there is no more state updates and the function can finish running?
+
+## UseMemo
+
+useMemo is basically the useCallback for any other types of data. We use it also on more performance intensive tasks, take sorting for example. It is an optimisation. Like useCallback and useEffect it has a dependency array, to update the return value when needed.
+
+We will use useCallback much more than useMemo, but useMemo is helpful for when passing a array as a prop. But we dont always need to use it, only if the tasks it triggers when re-rendered is performance intensive.
+
+Here is an exampke of how we use useMemo:
+
+```
+const sortedList = useMemo(() => {
+		console.log("items sorted");
+		return items.sort((a, b) => a - b);
+	}, [items]);
+```
