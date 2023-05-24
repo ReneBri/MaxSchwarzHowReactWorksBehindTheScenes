@@ -88,3 +88,73 @@ class Users extends Component {
 
 export default Users;
 ```
+
+**The Component Lifecycle - Class-based Components Only**
+
+With functional components we can utilize the useEffect hook. Since we can't use hooks with class-based components, how do we make use of effects? Well, we use the component lifecycle.
+
+There are certain methods we get access to with the Component class. One of these is the componentDidMount(). There is also componentDidUpdate() and componentWillUnmount().
+
+Component did mount is the equilivalt to using useEffect like this
+
+```
+useEffect(() => {}, []);
+```
+
+componentWillUnmount is basically the clean-up function we return in a useEffect.
+
+These lifecycle methods have arguments which include the prevProps and prevState. We use them to check against the current state to make sure that we don't cause any infinite loops in rendering/evaluating/executing.
+
+**Creating and providing context**
+
+With class-based compnents creating context is done the same way. You use React.createContext() and you wrap your app in a provider.
+
+That is creating and providing the context though. Consuming it is a different story. Don't forget that there is a Consumer component. It is possible to just wrap our returned jsx in the component with the context.Consumer component in order to Consume it.
+
+Thats good for accessing it in the jsx. What if we want it in the logical body of the class?...
+
+Class-based components can only be connected to one piece of context. We do this by adding a static property to our class. like so:
+
+```
+class Users extends Component {
+    static contextType = UserContext;
+}
+```
+
+Then to consume it in the logical body we do something like this:
+
+```
+componentDidMount() {
+    this.setState({ userName: this.context.user.username })
+}
+```
+
+**Error Boundaries**
+
+If an error is not handled it crashed the app. Handle your errors people.
+
+Error boundaries are for when we want to handle a component error but in the parents jsx. For example:
+
+```
+const componentOne = () => {
+    return (
+        <>
+            <ComponentTwo />
+        </>
+    )
+}
+```
+
+If we throw an error in componentTwo and want to handle it with the parent, without error boundaries, we can't. We actually can but we have to wrap it in a special ErrorBoundary component which we create:
+
+```
+const componentOne = () => {
+    return (
+        <>
+            <ErrorBoundary>
+                <ComponentTwo />
+            </ErrorBoundary>
+        </>
+    )
+}
+```
