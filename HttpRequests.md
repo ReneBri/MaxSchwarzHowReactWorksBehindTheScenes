@@ -28,3 +28,9 @@ Here's an example:
     			setMovies(transformedData);
     		});
     };
+
+For error handling errors: if we receive back a error code in the 200's range, it is a successful request, otherwise if we get back 400 or 500 responses it means we have a error response, for example if we try to access something which we are not authorised to access.
+
+Since the server wont throw an error when we get something back like a 404, we need to throw our own error in our try/catch block if an error code is received.
+
+One of the benefits of Axios is that it throws errors for error status codes.
