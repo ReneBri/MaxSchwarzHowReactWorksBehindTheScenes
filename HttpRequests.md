@@ -34,3 +34,38 @@ For error handling errors: if we receive back a error code in the 200's range, i
 Since the server wont throw an error when we get something back like a 404, we need to throw our own error in our try/catch block if an error code is received.
 
 One of the benefits of Axios is that it throws errors for error status codes.
+
+In a code block, once we throw an error the rest of the code after the error is not executed, rather our error handling is triggered.
+
+Here is a bare bnes example of how to make a post request from within React:
+
+    async function addMovieHandler(movie) {
+    	const response = await fetch(
+    		"https://react-http-709d2-default-rtdb.europe-west1.firebasedatabase.app/movies.json",
+    		{
+    			method: "POST",
+    			body: JSON.stringify(movie),
+    			header: {
+    				ContentType: "application/json",
+    			},
+    		}
+    	);
+    	const data = await response.json();
+    	console.log(data);
+    }
+
+This has no error handling but you get the point.
+
+Also, some cool syntax for pushing objects to an array is this:
+
+    const loadedMovies = [];
+
+    // This is an object full of objects
+    for (const key in data) {
+        loadedMovies.push({
+            id: key,
+            title: data[key].title,
+            openingText: data[key].openingText,
+            releaseDate: data[key].releaseDate,
+        });
+    }
