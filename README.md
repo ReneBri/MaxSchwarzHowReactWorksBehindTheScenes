@@ -47,9 +47,9 @@ Our output will be this:
 
 Basically assigning name to secondName isnt a pointer, it actually makes a copy of the value and stores it in the variable.
 
-Primitive data is stores on something called "the stack". The stack is a stack of data in your memory, which is in a place that can be accessed quickly and is actually quite limited in its storage capacity. In "the stack" when new variables are added they just get added to the top. The variable names we assign know which position in the stack they are refering to. Since the stack is limited in space that is what makes it perfect for primitive values, because they usually dont take up too much space.
+Primitive data is stored on something called "the stack". The stack is a stack of data in your memory, which is in a place that can be accessed quickly and is actually quite limited in its storage capacity. In "the stack" when new variables are added they just get added to the top. The variable names we assign know which position in the stack they are refering to. Since the stack is limited in space that is what makes it perfect for primitive values, because they usually dont take up too much space.
 
-If you do want to copy an objects vaues you can do either of the following: Use the Object.assign() function in JS or use the spread operator {...objectToCopy}. Object assign does not create deep copys though. It wont cory arrays inside of arrays, it will just copy the pointers to the arrays.
+If you do want to copy an objects values you can do either of the following: Use the Object.assign() function in JS or use the spread operator {...objectToCopy}. Object assign does not create deep copys though. It wont copy arrays inside of arrays, it will just copy the pointers to the arrays.
 
 **_Reference types:_**
 
@@ -112,7 +112,7 @@ So when we make a new variable which is meant to copy the object by writing this
 const employee2 = employee1;
 ```
 
-What we're actually doing is only copying the pointer in the stack and to the object in the heap. Hence changes to one means changes to the other.
+What we're actually doing is only copying the pointer in the stack and not the object in the heap. Hence changes to one means changes to the other.
 
 **_ Misc Details About Comparisons _**
 
@@ -236,7 +236,7 @@ If we want to save on performance because we know that a child function componen
 export default React.memo(Component);
 ```
 
-This only works with functional components. And this works because memo tells React to look at the components props and only if the old state snapshot of the props is different to the new state snapshot, then re-evaluate the component. So if the parent component is re-evaluated but the React.memo() components props did not change. the re-evaluation of that perticulat component will be skipped.
+This only works with functional components. And this works because memo tells React to look at the components props and only if the old state snapshot of the props is different to the new state snapshot, then re-evaluate the component. So if the parent component is re-evaluated but the React.memo() components props did not change. the re-evaluation of that perticular component will be skipped.
 
 The optomization method React.memo comes at a cost. This tells React that whenever the component is to be re-rendered, it has to compare the previous prop values to the current prop values. This means it has to both store the prop values and evaluate the prop values to make the comparison, which comes at its own cost. It's hard to say when this should or shouldnt be used as the amount of props a component takes and the size of a component and its children vary so much. It can be good using this on a high level of the component tree to avoid unnecessary re-evaluations of entire segments of the app.
 
@@ -258,9 +258,9 @@ When we use useCallback React basically locks in all the values of the variables
 
 **Components & State**
 
-One of the most common forms of managing state is the useState hook. Declaring useState automatically attaches that peice of state to that component. this sort of attachment is done behind the scenes by React.
+One of the most common forms of managing state is the useState hook. Declaring useState automatically attaches that peice of state to that component. This sort of attachment is done behind the scenes by React.
 
-useState only runs on the mounting of the component. react remembers if it has declared it before and does not re-declare it on each re-execution.
+useState only runs on the mounting of the component. React remembers if it has declared it before and does not re-declare it on each re-execution.
 
 **Understanding State Scheduling and Batching**
 
@@ -275,7 +275,7 @@ setProduct("Carpet");
 
 The final state change there will always be to Carpet, even if it isn't executed immediatly.
 
-Once it sees that there was a state change for product, then it will re-xecute and re-evaluate the function.
+Once it sees that there was a state change for product, then it will re-execute and re-evaluate the function.
 
 Since multiple state updates can be batched to be executed before a re-evaluation it is important we use the "prevState" in the function form such as this:
 
