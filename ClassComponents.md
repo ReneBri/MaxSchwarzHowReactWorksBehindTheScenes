@@ -14,7 +14,7 @@ class Product extends Component {
 }
 ```
 
-Components can be defined as JS calsses where a render() method defines the to-be-rendered output.
+Components can be defined as JS classes where a render() method defines the to-be-rendered output.
 
 FUNCTIONAL COMPONENTS ARE THE MOST MODERN AND DEFAULT WAY TO DECALRE A COMPONENT. THIS IS LEGACY.
 
